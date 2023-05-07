@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AI Self Listening Study</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <h1>Listening practice</h1>
+
+        
+        <p id="loading-message"></p>
+        <button id="btn-generate">Generate Story</button>
+
+        <audio
+            id="audio-player"
+            controls
+            src="https://listnraudioazure.blob.core.windows.net/listnraudio/5f7455cb-888f-467c-b6e9-d456bb20829e_s3.mp3"
+        ></audio>
+
+        <div id="stories"></div>
+
+        <div id="welcome">
+          Your AI assistant to practice listening tests. 
+        </div>
+
+        <script type="module" src="script.js"></script>
+    </body>
+</html>
