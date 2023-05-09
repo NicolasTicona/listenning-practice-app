@@ -1,36 +1,26 @@
 import 'dotenv/config';
 import axios from 'axios';
 import path from 'path';
-import { Configuration, OpenAIApi } from "openai";
 import { promises as fs } from 'fs';
 import { AIVoiceAudio, ListnrVoiceResponse } from './interfaces/text-to-speech.interface';
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { TextGeneration } from './text-generation/text-generation';
+import { openai } from './open-ai-instance';
 
 const prompt = `write a english listening practice story for english students in b2 level, just two lines. Do not include symbols and breaklines.`;
 let generatedStory = "";
 
-const openai = new OpenAIApi(configuration);
 
 async function generateStory(): Promise<boolean> {
   try {
-    const response = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt,
-      temperature: 0.7,
-      max_tokens: 256,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
+    const textGeneration = new TextGeneration(openai);
 
-    if (!response.data.choices[0].text) {
+    const text = await textGeneration.generateText(prompt);
+
+    if (!text) {
       return false;
     }
 
-    generatedStory = response.data.choices[0].text;
+    generatedStory = text
 
     return true;
   } catch {

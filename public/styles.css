@@ -41,13 +41,13 @@ h1 {
   margin-top: 40px;
 }
 
-#stories p::after {
+/* #stories p::after {
   content: '';
   display: block;
   width: 10px;
   height: 5px;
   background-color: #fff;
-}
+} */
 
 #audio-player {
   margin: 50px 0 60px 0;

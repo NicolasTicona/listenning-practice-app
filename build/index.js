@@ -16,6 +16,9 @@ const cors_1 = __importDefault(require("cors"));
 const path_1 = __importDefault(require("path"));
 const express_1 = __importDefault(require("express"));
 const story_gen_1 = require("./story-gen");
+require("./open-ai-instance");
+const text_generation_1 = require("./text-generation/text-generation");
+const open_ai_instance_1 = require("./open-ai-instance");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 app.use((0, cors_1.default)());
@@ -36,6 +39,36 @@ app.get("/generate", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     res.json({ data });
 }));
-console.log();
+app.get('/try-openai', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // 384 tokens total
+    const prompt = `Write a B2 level story for an English listening test. Story must have up to 5 lines.
+  Create two multiple-choice (3 options) questions based on the story.
+  Use HTML tags to format the text.
+
+  Examples
+
+  <p id='story'>
+    Jack and his sister, Jill, had an argument about what to do on the weekend. They eventually decided to go on a hike together and enjoy the fresh air.
+  <p/>
+
+  <p class='question'>
+    <span> Question 1: </span>
+    <span> A: Option 1 </span>
+    <span> B: Option 2 </span>
+    <span> C: Option 3 </span> 
+  </p>
+  <p class='question'>
+    <span> Question 2 </span>
+    <span> A: Option 1 </span>
+    <span> B: Option 2 </span>
+    <span> C: Option 3 </span>
+  </p>
+  .
+  `;
+    const textGeneration = new text_generation_1.TextGeneration(open_ai_instance_1.openai);
+    let text = yield textGeneration.generateText(prompt);
+    text = text.replace(/\n/g, '');
+    res.json({ text });
+}));
 // Serve backend
 app.listen(port, () => console.log(`app listening on port 3000!`));

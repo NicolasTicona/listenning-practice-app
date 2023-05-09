@@ -16,30 +16,20 @@ exports.mockGenerateAudio = exports.generateAudio = void 0;
 require("dotenv/config");
 const axios_1 = __importDefault(require("axios"));
 const path_1 = __importDefault(require("path"));
-const openai_1 = require("openai");
 const fs_1 = require("fs");
-const configuration = new openai_1.Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+const text_generation_1 = require("./text-generation/text-generation");
+const open_ai_instance_1 = require("./open-ai-instance");
 const prompt = `write a english listening practice story for english students in b2 level, just two lines. Do not include symbols and breaklines.`;
 let generatedStory = "";
-const openai = new openai_1.OpenAIApi(configuration);
 function generateStory() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield openai.createCompletion({
-                model: "text-davinci-003",
-                prompt,
-                temperature: 0.7,
-                max_tokens: 256,
-                top_p: 1,
-                frequency_penalty: 0,
-                presence_penalty: 0,
-            });
-            if (!response.data.choices[0].text) {
+            const textGeneration = new text_generation_1.TextGeneration(open_ai_instance_1.openai);
+            const text = yield textGeneration.generateText(prompt);
+            if (!text) {
                 return false;
             }
-            generatedStory = response.data.choices[0].text;
+            generatedStory = text;
             return true;
         }
         catch (_a) {
