@@ -7,9 +7,9 @@ if (localStorage.getItem("stories")) {
     pageState.change(injector.get(ListennigState));
 }
 
-console.log(pageState.currentState);
-
 document.addEventListener('changeState', function (event) {
+  console.log('change state');
+
   switch(event.detail?.newState) {
     case 'listenning':
       pageState.change(injector.get(ListennigState));

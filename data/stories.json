@@ -1,9 +1,1 @@
-[
-    {
-        "success": true,
-        "url": "https://listnraudioazure.blob.core.windows.net/listnraudio/c8fc8d12-2f72-467a-95c9-325a81132b10_s3.mp3",
-        "audioKey": "c8fc8d12-2f72-467a-95c9-325a81132b10_s3",
-        "voiceoverId": "6459304e28576b00242464ad",
-        "story": "\n\nJack and his sister, Jill, had an argument about what to do on the weekend. They eventually decided to go on a hike together and enjoy the fresh air."
-    }
-]
+[{"success":true,"url":"https://listnraudioazure.blob.core.windows.net/listnraudio/d0d896af-d314-489c-a976-30d611381fbd_s3.mp3","audioKey":"d0d896af-d314-489c-a976-30d611381fbd_s3","voiceoverId":"645a8e651d0c8800249176e0","story":"\n\nJohn and his family moved to a new city last year. He's been learning English in classes and is now confident enough to practice his conversation skills with his new friends."}]

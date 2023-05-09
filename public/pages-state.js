@@ -31,6 +31,8 @@ const welcomeMessage = document.querySelector("#welcome");
 export class WelcomeState {
     destroy() {
         welcomeMessage.style.display = "none";
+        button.removeEventListener('click', this.onClickStart, false);
+        button.removeEventListener('click', this.onClickStart, true);
     }
 
     init() {
@@ -48,10 +50,6 @@ export class WelcomeState {
 }
 
 export class ListennigState {
-    constructor() {
-        this.init();
-    }
-
     destroy() {
         storiesContainer.style.display = "none";
         button.addEventListener("click", () => {});
@@ -71,7 +69,7 @@ export class ListennigState {
             .join("");
 
         button.addEventListener("click", () => {
-            this.generateStory();
+          this.generateStory();
         });
     }
 
