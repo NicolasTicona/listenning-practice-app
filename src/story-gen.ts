@@ -57,6 +57,8 @@ export async function generateAudio(): Promise<AIVoiceAudio> {
     const voiceAudio: AIVoiceAudio = { ...response.data, story: generatedStory };
     await saveStory(voiceAudio);
 
+    console.log(voiceAudio);
+
     return voiceAudio;
   } catch (err) {
     return Promise.reject(err);

@@ -42,6 +42,7 @@ app.get('/try-openai', async (req: Request, res: Response) => {
   const prompt = `Write a B2 level story for an English listening test. Story must have up to 5 lines.
   Create two multiple-choice (3 options) questions based on the story.
   Use HTML tags to format the text.
+  Indicate correct answer with a id='correct'.
 
   Examples
 
@@ -51,14 +52,14 @@ app.get('/try-openai', async (req: Request, res: Response) => {
 
   <p class='question'>
     <span> Question 1: </span>
-    <span> A: Option 1 </span>
+    <span id='correct'> A: Option 1 </span>
     <span> B: Option 2 </span>
     <span> C: Option 3 </span> 
   </p>
   <p class='question'>
     <span> Question 2 </span>
     <span> A: Option 1 </span>
-    <span> B: Option 2 </span>
+    <span id='correct'> B: Option 2 </span>
     <span> C: Option 3 </span>
   </p>
   .

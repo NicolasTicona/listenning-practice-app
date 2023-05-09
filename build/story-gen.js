@@ -59,6 +59,7 @@ function generateAudio() {
             }
             const voiceAudio = Object.assign(Object.assign({}, response.data), { story: generatedStory });
             yield saveStory(voiceAudio);
+            console.log(voiceAudio);
             return voiceAudio;
         }
         catch (err) {
