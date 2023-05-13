@@ -7,4 +7,5 @@ export interface ListnrVoiceResponse {
 
 export interface AIVoiceAudio extends ListnrVoiceResponse {
   story: string;
+  questions: string;
 }

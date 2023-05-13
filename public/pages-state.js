@@ -25,14 +25,15 @@ let stories = [];
 const loadingMessage = document.querySelector("#loading-message");
 const audio = document.querySelector("#audio-player");
 const button = document.querySelector("#btn-generate");
-const storiesContainer = document.querySelector("#stories");
+const listenningStoryContainer = document.querySelector("#listenning-story");
 const welcomeMessage = document.querySelector("#welcome");
+let questions = [];
 
 export class WelcomeState {
     destroy() {
         welcomeMessage.style.display = "none";
-        button.removeEventListener('click', this.onClickStart, false);
-        button.removeEventListener('click', this.onClickStart, true);
+        button.removeEventListener("click", this.onClickStart, false);
+        button.removeEventListener("click", this.onClickStart, true);
     }
 
     init() {
@@ -51,25 +52,31 @@ export class WelcomeState {
 
 export class ListennigState {
     destroy() {
-        storiesContainer.style.display = "none";
-        button.addEventListener("click", () => {});
+        listenningStoryContainer.style.display = "none";
+        button.removeEventListener("click", this.generateStory, false);
+        button.removeEventListener("click", this.generateStory, true);
     }
 
     init() {
         button.textContent = "Generate a story";
 
-        storiesContainer.style.display = "block";
+        listenningStoryContainer.style.display = "block";
 
         stories = JSON.parse(localStorage.getItem("stories")) ?? [];
 
-        storiesContainer.innerHTML = stories
-            .map((story) => {
-                return `<p>${story}</p>`;
-            })
-            .join("");
+        if (stories.length == 0) {
+            this.generateStory();
+        }
+
+        const story = stories[0];
+
+        audio.src = story.url;
+        audio.controls = true;
+
+        renderStoryQuestions(story);
 
         button.addEventListener("click", () => {
-          this.generateStory();
+            this.generateStory();
         });
     }
 
@@ -105,18 +112,40 @@ export class ListennigState {
         audio.controls = true;
         loadingMessage.textContent = "";
 
-        if (storiesContainer.style.display === "none") {
-            storiesContainer.style.display = "block";
+        if (listenningStoryContainer.style.display === "none") {
+            listenningStoryContainer.style.display = "block";
         }
 
-        stories = [data.story, ...stories];
+        stories = [data, ...stories];
 
-        document.querySelector("#stories").innerHTML =
-            `<p>${data.story}</p>` +
-            document.querySelector("#stories").innerHTML;
+        renderStoryQuestions(data);
 
         localStorage.setItem("stories", JSON.stringify(stories));
     }
+}
+
+function renderStoryQuestions(story) {
+    listenningStoryContainer.querySelector("#story-container").innerHTML =
+        story.story;
+    listenningStoryContainer.querySelector("#questions-container").innerHTML =
+        story.questions;
+
+    questions = listenningStoryContainer.querySelectorAll(
+        "#questions-container .question span"
+    );
+
+    questions.forEach((question) => {
+        question.removeEventListener("click", checkAnswer, false);
+        question.removeEventListener("click", checkAnswer, true);
+    });
+
+    questions.forEach((question) => {
+        question.addEventListener("click", checkAnswer);
+    });
+}
+
+function checkAnswer(event) {
+  console.log(event.target.id === 'correct');
 }
 
 export class PageState {

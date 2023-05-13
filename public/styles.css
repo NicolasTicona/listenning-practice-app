@@ -30,19 +30,36 @@ h1 {
   display: inherit;
 }
 
-#stories {
+#listenning-story {
   width: 100%;
   height: 250px;
-  overflow-y: auto;
-  border: 2px solid #fff;
   padding: 20px;
 }
 
-#stories p {
-  margin-top: 40px;
+#listenning-story #story-container {
+  margin-bottom: 40px;
 }
 
-/* #stories p::after {
+#listenning-story #questions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#listenning-story #questions-container .question {
+  font-size: 16px;
+}
+#listenning-story #questions-container .question p {
+  font-weight: 600;
+}
+#listenning-story #questions-container .question span {
+  display: block;
+  line-height: 28px;
+  cursor: pointer;
+}
+
+
+/* #listenning-story p::after {
   content: '';
   display: block;
   width: 10px;

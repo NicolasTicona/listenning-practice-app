@@ -5,8 +5,9 @@ import { promises as fs } from 'fs';
 import { AIVoiceAudio, ListnrVoiceResponse } from './interfaces/text-to-speech.interface';
 import { TextGeneration } from './text-generation/text-generation';
 import { openai } from './open-ai-instance';
+import { PROMPT } from './index';
+import { replaceStringPortion } from './utils/get-content-from-html-tag';
 
-const prompt = `write a english listening practice story for english students in b2 level, just two lines. Do not include symbols and breaklines.`;
 let generatedStory = "";
 
 
@@ -14,7 +15,7 @@ async function generateStory(): Promise<boolean> {
   try {
     const textGeneration = new TextGeneration(openai);
 
-    const text = await textGeneration.generateText(prompt);
+    const text = await textGeneration.generateText(PROMPT);
 
     if (!text) {
       return false;
@@ -29,18 +30,25 @@ async function generateStory(): Promise<boolean> {
 }
 
 export async function generateAudio(): Promise<AIVoiceAudio> {
-  const story = await generateStory();
+  const success = await generateStory();
 
-  if (!story) {
+  if (!success) {
     throw new Error("Error generating story");
   }
+
+  const [story, questions] = generatedStory.split("<hr>");
+
+  let speechStory = replaceStringPortion("<p id='story'>", "", story);
+  speechStory = replaceStringPortion("</p>", "", speechStory);
+  speechStory = replaceStringPortion("</hr>", "", speechStory);
+  speechStory = replaceStringPortion("<hr>", "", speechStory);
 
   try {
     const response = await axios.post<ListnrVoiceResponse>(
       "https://bff.listnr.tech/api/tts/v1/convert-text",
       {
         voice: "en-US-AmberNeural",
-        ssml: `<speak>${generatedStory}</speak>`,
+        ssml: `<speak>${speechStory}</speak>`,
       },
       {
         headers: {
@@ -54,10 +62,10 @@ export async function generateAudio(): Promise<AIVoiceAudio> {
       throw new Error("Error generating audio");
     }
 
-    const voiceAudio: AIVoiceAudio = { ...response.data, story: generatedStory };
+    const voiceAudio: AIVoiceAudio = { ...response.data, story, questions };
     await saveStory(voiceAudio);
 
-    console.log(voiceAudio);
+    console.log("Voice Audio:", voiceAudio);
 
     return voiceAudio;
   } catch (err) {

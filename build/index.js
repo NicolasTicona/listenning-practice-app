@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PROMPT = void 0;
 const cors_1 = __importDefault(require("cors"));
 const path_1 = __importDefault(require("path"));
 const express_1 = __importDefault(require("express"));
@@ -21,23 +22,52 @@ const text_generation_1 = require("./text-generation/text-generation");
 const open_ai_instance_1 = require("./open-ai-instance");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
+exports.PROMPT = `Write a B2 level story for an English listening test. Story must have up to 5 lines.
+Create two multiple-choice (2 options) questions based on the story.
+Use HTML tags to format the text.
+Indicate correct answer with a id='correct'.
+Add <hr> between story and questions
+
+Example:
+
+<p id='story'>Jack and his sister, Jill, had an argument about what to do on the weekend. They eventually decided to go on a hike together and enjoy the fresh air.<p/>
+
+<hr>
+
+<div class='question'>
+  <p> Why Jack and his sister had an argument ?</p>
+  <span id='correct'> A: They were discussing what activity do in on the weekend. </span>
+  <span> B: They forgot to cook for lunch </span>
+</div>
+<div class='question'>
+  <p> Where did they go ? </p>
+  <span> A: They went to hike together</span>
+  <span id='correct'> B: They went to ride together</span>
+</div>`;
 app.use((0, cors_1.default)());
 // Frontend
 app.use(express_1.default.static(path_1.default.join(__dirname, '../public')));
 // Routes
 app.get("/generate", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let data;
-    if (process.argv[2] === "--dev") {
-        const mockStories = yield (0, story_gen_1.mockGenerateAudio)();
-        data = mockStories[0];
-        if (!data) {
+    try {
+        if (process.argv[2] === "--dev") {
+            const mockStories = yield (0, story_gen_1.mockGenerateAudio)();
+            data = mockStories[0];
+            if (!data) {
+                data = yield (0, story_gen_1.generateAudio)();
+            }
+        }
+        else {
             data = yield (0, story_gen_1.generateAudio)();
         }
+        res.json({ data });
     }
-    else {
-        data = yield (0, story_gen_1.generateAudio)();
+    catch (err) {
+        console.log('error');
+        console.log(err);
+        res.status(500).json(err);
     }
-    res.json({ data });
 }));
 app.get('/try-openai', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // 384 tokens total
@@ -46,11 +76,13 @@ app.get('/try-openai', (req, res) => __awaiter(void 0, void 0, void 0, function*
   Use HTML tags to format the text.
   Indicate correct answer with a id='correct'.
 
-  Examples
+  Examples:
 
   <p id='story'>
     Jack and his sister, Jill, had an argument about what to do on the weekend. They eventually decided to go on a hike together and enjoy the fresh air.
   <p/>
+
+  <hr>
 
   <p class='question'>
     <span> Question 1: </span>
@@ -67,7 +99,7 @@ app.get('/try-openai', (req, res) => __awaiter(void 0, void 0, void 0, function*
   .
   `;
     const textGeneration = new text_generation_1.TextGeneration(open_ai_instance_1.openai);
-    let text = yield textGeneration.generateText(prompt);
+    let text = yield textGeneration.generateText(exports.PROMPT);
     text = text.replace(/\n/g, '');
     res.json({ text });
 }));

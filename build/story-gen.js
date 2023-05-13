@@ -19,13 +19,14 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = require("fs");
 const text_generation_1 = require("./text-generation/text-generation");
 const open_ai_instance_1 = require("./open-ai-instance");
-const prompt = `write a english listening practice story for english students in b2 level, just two lines. Do not include symbols and breaklines.`;
+const index_1 = require("./index");
+const get_content_from_html_tag_1 = require("./utils/get-content-from-html-tag");
 let generatedStory = "";
 function generateStory() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const textGeneration = new text_generation_1.TextGeneration(open_ai_instance_1.openai);
-            const text = yield textGeneration.generateText(prompt);
+            const text = yield textGeneration.generateText(index_1.PROMPT);
             if (!text) {
                 return false;
             }
@@ -40,14 +41,17 @@ function generateStory() {
 function generateAudio() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const story = yield generateStory();
-        if (!story) {
+        const success = yield generateStory();
+        if (!success) {
             throw new Error("Error generating story");
         }
+        const [story, questions] = generatedStory.split("<hr>");
+        let speechStory = (0, get_content_from_html_tag_1.replaceStringPortion)("<p id='story'>", "", story);
+        speechStory = (0, get_content_from_html_tag_1.replaceStringPortion)("</p>", "", speechStory);
         try {
             const response = yield axios_1.default.post("https://bff.listnr.tech/api/tts/v1/convert-text", {
                 voice: "en-US-AmberNeural",
-                ssml: `<speak>${generatedStory}</speak>`,
+                ssml: `<speak>${speechStory}</speak>`,
             }, {
                 headers: {
                     "x-listnr-token": (_a = process.env.LISTNR_API_KEY) !== null && _a !== void 0 ? _a : "",
@@ -57,9 +61,9 @@ function generateAudio() {
             if (response.status !== 200) {
                 throw new Error("Error generating audio");
             }
-            const voiceAudio = Object.assign(Object.assign({}, response.data), { story: generatedStory });
+            const voiceAudio = Object.assign(Object.assign({}, response.data), { story, questions });
             yield saveStory(voiceAudio);
-            console.log(voiceAudio);
+            console.log("Voice Audio:", voiceAudio);
             return voiceAudio;
         }
         catch (err) {
