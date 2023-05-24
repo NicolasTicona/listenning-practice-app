@@ -149,7 +149,27 @@ function renderStoryQuestions(story) {
 }
 
 function checkAnswer(event) {
-    console.log(event.target.id === "correct");
+    if (event.target.id !== "correct") {
+      Swal.fire({
+        title: 'Wrong answer',
+        icon: 'error',
+        backdrop: false,
+        position: 'top-end',
+        timer: 1500,
+        showConfirmButton: false
+      })
+
+      return;
+    }
+
+    Swal.fire({
+      title: 'Correct answer',
+      icon: 'success',
+      backdrop: false,
+      position: 'top-end',
+      timer: 1500,
+      showConfirmButton: false
+    })
 }
 
 export class PageState {
