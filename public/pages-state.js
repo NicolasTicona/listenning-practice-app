@@ -38,7 +38,7 @@ export class WelcomeState {
 
     init() {
         welcomeMessage.style.display = "block";
-        button.textContent = "Explore and practice";
+        button.textContent = "Try out";
         button.addEventListener("click", this.onClickStart);
     }
 
@@ -66,18 +66,22 @@ export class ListennigState {
 
         if (stories.length == 0) {
             this.generateStory();
+
+            button.addEventListener("click", () => {
+                this.generateStory();
+            });
+        } else {
+            const story = stories[0];
+
+            audio.src = story.url;
+            audio.controls = true;
+
+            renderStoryQuestions(story);
+
+            button.addEventListener("click", () => {
+                this.generateStory();
+            });
         }
-
-        const story = stories[0];
-
-        audio.src = story.url;
-        audio.controls = true;
-
-        renderStoryQuestions(story);
-
-        button.addEventListener("click", () => {
-            this.generateStory();
-        });
     }
 
     async generateStory() {
@@ -145,7 +149,7 @@ function renderStoryQuestions(story) {
 }
 
 function checkAnswer(event) {
-  console.log(event.target.id === 'correct');
+    console.log(event.target.id === "correct");
 }
 
 export class PageState {

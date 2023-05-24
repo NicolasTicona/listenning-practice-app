@@ -48,6 +48,9 @@ function generateAudio() {
         const [story, questions] = generatedStory.split("<hr>");
         let speechStory = (0, get_content_from_html_tag_1.replaceStringPortion)("<p id='story'>", "", story);
         speechStory = (0, get_content_from_html_tag_1.replaceStringPortion)("</p>", "", speechStory);
+        speechStory = (0, get_content_from_html_tag_1.replaceStringPortion)("</hr>", "", speechStory);
+        speechStory = (0, get_content_from_html_tag_1.replaceStringPortion)("<hr>", "", speechStory);
+        speechStory = (0, get_content_from_html_tag_1.replaceStringPortion)("<p/>", "", speechStory);
         try {
             const response = yield axios_1.default.post("https://bff.listnr.tech/api/tts/v1/convert-text", {
                 voice: "en-US-AmberNeural",

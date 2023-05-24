@@ -62,7 +62,6 @@ app.get("/generate", async (req: Request, res: Response) => {
     res.json({ data });
 
   } catch (err) {
-    console.log('error');
     console.log(err);
     res.status(500).json(err)
   }

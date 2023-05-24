@@ -64,7 +64,6 @@ app.get("/generate", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.json({ data });
     }
     catch (err) {
-        console.log('error');
         console.log(err);
         res.status(500).json(err);
     }

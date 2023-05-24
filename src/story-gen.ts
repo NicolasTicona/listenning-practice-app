@@ -37,12 +37,13 @@ export async function generateAudio(): Promise<AIVoiceAudio> {
   }
 
   const [story, questions] = generatedStory.split("<hr>");
-
+  
   let speechStory = replaceStringPortion("<p id='story'>", "", story);
   speechStory = replaceStringPortion("</p>", "", speechStory);
   speechStory = replaceStringPortion("</hr>", "", speechStory);
   speechStory = replaceStringPortion("<hr>", "", speechStory);
-
+  speechStory = replaceStringPortion("<p/>", "", speechStory);
+  
   try {
     const response = await axios.post<ListnrVoiceResponse>(
       "https://bff.listnr.tech/api/tts/v1/convert-text",
