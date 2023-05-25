@@ -6,7 +6,7 @@ export class TextGeneration {
     model: "text-davinci-003",
     prompt: "",
     temperature: 0.4,
-    max_tokens: 512,
+    max_tokens: 800,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
@@ -32,8 +32,6 @@ export class TextGeneration {
       if (!response.data.choices[0].text) {
         throw new Error("Error generating prompt");
       }
-    
-      console.log(response.data);
 
       return response.data.choices[0].text;
 

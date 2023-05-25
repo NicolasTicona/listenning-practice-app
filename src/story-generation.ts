@@ -3,7 +3,7 @@ import axios from 'axios';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { AIVoiceAudio, ListnrVoiceResponse } from './interfaces/text-to-speech.interface';
-import { TextGeneration } from './text-generation/text-generation';
+import { TextGeneration } from './text-generation';
 import { openai } from './open-ai-instance';
 import { PROMPT } from './index';
 import { replaceStringPortion } from './utils/get-content-from-html-tag';
@@ -22,34 +22,32 @@ async function generateStory(): Promise<boolean> {
     }
 
     generatedStory = text
-
     return true;
-  } catch {
+  } catch (err){
     return false;
   }
 }
 
 export async function generateAudio(): Promise<AIVoiceAudio> {
-  const success = await generateStory();
+  const generatedStorySuccess = await generateStory();
 
-  if (!success) {
+  if (!generatedStorySuccess) {
     throw new Error("Error generating story");
   }
-
-  const [story, questions] = generatedStory.split("<hr>");
   
-  let speechStory = replaceStringPortion("<p id='story'>", "", story);
-  speechStory = replaceStringPortion("</p>", "", speechStory);
-  speechStory = replaceStringPortion("</hr>", "", speechStory);
-  speechStory = replaceStringPortion("<hr>", "", speechStory);
-  speechStory = replaceStringPortion("<p/>", "", speechStory);
+  const [story, questions] = generatedStory.split("<hr id='separation'>");
+  let noTagsStory = replaceStringPortion("<p id='story'>", "", story);
+  noTagsStory = replaceStringPortion("</p>", "", noTagsStory);
+  noTagsStory = replaceStringPortion("</hr>", "", noTagsStory);
+  noTagsStory = replaceStringPortion("<hr>", "", noTagsStory);
+  noTagsStory = replaceStringPortion("<p/>", "", noTagsStory);
   
   try {
     const response = await axios.post<ListnrVoiceResponse>(
       "https://bff.listnr.tech/api/tts/v1/convert-text",
       {
         voice: "en-US-AmberNeural",
-        ssml: `<speak>${speechStory}</speak>`,
+        ssml: `<speak>${noTagsStory}</speak>`,
       },
       {
         headers: {
@@ -66,9 +64,8 @@ export async function generateAudio(): Promise<AIVoiceAudio> {
     const voiceAudio: AIVoiceAudio = { ...response.data, story, questions };
     await saveStory(voiceAudio);
 
-    console.log("Voice Audio:", voiceAudio);
-
     return voiceAudio;
+
   } catch (err) {
     return Promise.reject(err);
   }
@@ -84,10 +81,9 @@ async function saveStory(voiceAudio: AIVoiceAudio): Promise<void> {
   await fs.writeFile(path.join(__dirname, '../data/stories.json'), JSON.stringify(stories));
 }
 
-export async function mockGenerateAudio(): Promise<AIVoiceAudio[]> {
-
+export async function mockGenerateAudio(): Promise<AIVoiceAudio> {
   const data = await fs.readFile(path.join(__dirname, '../data/stories.json'), 'utf8');
   const stories = data ? JSON.parse(data) : [];
 
-  return stories ?? [];
+  return stories ? stories[0] : null;
 }

@@ -17,7 +17,7 @@ require("dotenv/config");
 const axios_1 = __importDefault(require("axios"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = require("fs");
-const text_generation_1 = require("./text-generation/text-generation");
+const text_generation_1 = require("./text-generation");
 const open_ai_instance_1 = require("./open-ai-instance");
 const index_1 = require("./index");
 const get_content_from_html_tag_1 = require("./utils/get-content-from-html-tag");

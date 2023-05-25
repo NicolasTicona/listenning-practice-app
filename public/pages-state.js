@@ -129,8 +129,8 @@ export class ListennigState {
 }
 
 function renderStoryQuestions(story) {
-    listenningStoryContainer.querySelector("#story-container").innerHTML =
-        story.story;
+    // listenningStoryContainer.querySelector("#story-container").innerHTML =
+    //     story.story;
     listenningStoryContainer.querySelector("#questions-container").innerHTML =
         story.questions;
 
@@ -150,32 +150,27 @@ function renderStoryQuestions(story) {
 
 function checkAnswer(event) {
     if (event.target.id !== "correct") {
-      Swal.fire({
-        title: 'Wrong answer',
-        icon: 'error',
-        backdrop: false,
-        position: 'top-end',
-        timer: 1500,
-        showConfirmButton: false
-      })
+        showDialogMessage({ title: "Wrong!", icon: "error" });
 
-      return;
+        return;
     }
 
+    showDialogMessage({ title: "Correct!", icon: "success" });
+}
+
+function showDialogMessage({ title, icon }) {
     Swal.fire({
-      title: 'Correct answer',
-      icon: 'success',
-      backdrop: false,
-      position: 'top-end',
-      timer: 1500,
-      showConfirmButton: false
-    })
+        title,
+        icon,
+        backdrop: false,
+        position: "top-end",
+        timer: 1500,
+        showConfirmButton: false,
+    });
 }
 
 export class PageState {
     currentState;
-
-    constructor() {}
 
     init() {
         this.change(injector.get(WelcomeState));
